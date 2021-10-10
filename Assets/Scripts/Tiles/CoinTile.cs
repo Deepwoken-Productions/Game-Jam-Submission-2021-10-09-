@@ -4,15 +4,18 @@ using UnityEngine;
 
 struct CoinTile : ITile
 {
-    public GameObject tile { get; set; }
+    public GameObject tile;
 
     bool triggered { get; set; }
 
-    public CoinTile(Material Mat)
+    public GameObject GetTile()
     {
-        tile = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        tile.GetComponent<MeshRenderer>().material = Mat;
-        tile.transform.localScale = new Vector3(8f, 0.125f, 8f);
+        return tile;
+    }
+
+    public CoinTile(bool isTriggered)
+    {
+        tile = TileManager.instance.tilePrefabs[0];
         triggered = false;
     }
 
@@ -24,16 +27,5 @@ struct CoinTile : ITile
     public void Push()
     {
 
-    }
-
-    public void Create(Vector3 Location)
-    {
-        tile.transform.position = Location;
-        if (tile) 
-        {
-            Debug.Log("Pog" + tile.transform.position);
-        }
-        //Does nothing?
-        tile = GameObject.Instantiate(tile, Location, Quaternion.identity);
     }
 }

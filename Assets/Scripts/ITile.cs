@@ -1,9 +1,8 @@
 using UnityEngine;
 
-interface ITile
+public interface ITile
 {
+    GameObject GetTile();
     void OnStep();
     void Push();
-
-    void Create(Vector3 Location);
 }

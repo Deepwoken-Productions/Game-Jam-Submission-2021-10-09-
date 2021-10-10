@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct DefaultTile : ITile
+public struct ConveyerTile : ITile
 {
     public GameObject tile;
 
@@ -13,7 +13,7 @@ public struct DefaultTile : ITile
         return tile;
     }
 
-    public DefaultTile(bool isTriggered)
+    public ConveyerTile(bool isTriggered)
     {
         tile = TileManager.instance.tilePrefabs[1];
         triggered = false;

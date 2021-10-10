@@ -4,29 +4,155 @@ using UnityEngine;
 
 public class TileManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    private ITile[,] tiles = new ITile[8,8];
+    //This is a singleton class uwu
+    public static TileManager instance { get; private set; }
 
-    public Material CoinTileMat;
-    public Material DefTileMat;
-    public Material ConveyorMat;
+    public int mapLength;
+    public int mapWidth;
 
-    void Start()
+    public Transform origin;
+
+    public GameObject[,] tileArray;
+    public List<GameObject> tilePrefabs;
+
+    private int upMovements;
+    public int maxCoins;
+    private int currentCoins = 0;
+
+    private Vector2Int snakeCurrentPosition;
+    private Vector2Int snakeNextPosition;
+
+    void Awake()
     {
-        tiles[0, 0] = new NullTile(false); // may be completely redundant, depends on how you do the snake.
-        tiles[1, 0] = new CoinTile(CoinTileMat);
-        if (tiles[0, 0] != null)
+        if (instance == null)
         {
-            Debug.Log("exists");
+            instance = this;
         }
-        tiles[0, 0].Create(new Vector3(0f, 20f, 0f));
-        tiles[1, 0].Create(new Vector3(0f, 25f, 0f));
+        else
+        {
+            GameObject.Destroy(gameObject);
+        }
 
-        Debug.Log("Tiles Spawned");
+        tileArray = new GameObject[mapLength, mapWidth];
+
+        PopulateMap();
+
+        StartCoroutine("GenerateMap");
+        //GenerateMap();
     }
 
-    // Update is called once per frame
-    void Update()
+    void PopulateMap()
     {
+        for (int i = -mapLength / 2; i < mapLength / 2; i++)
+        {
+            for (int j = -mapWidth / 2; j < mapWidth / 2; j++)
+            {
+                ITile tilePrefab;
+
+                ITile coinTile = new CoinTile(false);
+                ITile defaultTile = new DefaultTile(false);
+
+                int randomNumber = Random.Range(0, 2);
+
+                if (randomNumber == 0)
+                {
+                    if(currentCoins >= maxCoins)
+                    {
+                        tilePrefab = defaultTile;
+                    }
+                    else
+                    {
+                        tilePrefab = coinTile;
+                        currentCoins++;
+                    }
+                }
+                else
+                {
+                    tilePrefab = defaultTile;
+                }
+
+                GameObject newTile = GameObject.Instantiate(tilePrefab.GetTile());
+                newTile.transform.position = origin.position + new Vector3(origin.position.x, 0, origin.position.z) + new Vector3(i * newTile.transform.GetChild(0).localScale.x * 2, 0, j * newTile.transform.GetChild(0).localScale.z * 2);
+                newTile.transform.parent = transform;
+
+                tileArray[i + mapLength/2, j + mapWidth/2] = newTile;
+            }
+        }
+    }
+
+    IEnumerator GenerateMap()
+    {
+        upMovements = 0;
+
+        snakeCurrentPosition = new Vector2Int(0, Mathf.RoundToInt(mapLength / 2));
+        Destroy(tileArray[0, snakeCurrentPosition.y]);
+
+        while (true)
+        {
+            int direction = Random.Range(0, 4);
+            snakeNextPosition = Vector2Int.zero;
+
+            if(direction == 0)
+            {
+                snakeNextPosition = snakeCurrentPosition + new Vector2Int(1, 0);
+            }
+            else if(direction == 1)
+            {
+                snakeNextPosition = snakeCurrentPosition + new Vector2Int(0, 1);
+            }
+            else if (direction == 2)
+            {
+                snakeNextPosition = snakeCurrentPosition + new Vector2Int(-1, 0);
+            }
+            else if (direction == 3)
+            {
+                snakeNextPosition = snakeCurrentPosition +  new Vector2Int(0, -1);
+            }
+
+            MoveIfPositionValid();
+
+            if(upMovements >= 6)
+            {
+                Debug.Log("Snake has reached the end");
+                break;
+            }
+
+            yield return new WaitForSeconds(1);
+
+            Destroy(tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y]);
+
+            if(tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y])
+            {
+                tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y].transform.name = "NullTile";
+            }
+        }
+    }
+
+    void MoveIfPositionValid()
+    {
+        if (snakeNextPosition.x <= tileArray.GetLength(0) - 1 && snakeNextPosition.x >= 0)
+        {
+            if (tileArray[snakeNextPosition.x, snakeCurrentPosition.y] != null && tileArray[snakeNextPosition.x, snakeCurrentPosition.y].transform.name != "NullTile")
+            {
+                if (snakeNextPosition.x > snakeCurrentPosition.x)
+                {
+                    upMovements++;
+                }
+
+                snakeCurrentPosition.x = snakeNextPosition.x;
+
+                Debug.Log("Moved on x");
+            }
+        }
+
+        if (snakeNextPosition.y <= tileArray.GetLength(1) - 1 && snakeNextPosition.y >= 0)
+        {
+            if (tileArray[snakeCurrentPosition.x, snakeNextPosition.y] != null && tileArray[snakeCurrentPosition.x, snakeNextPosition.y].transform.name != "NullTile")
+            {
+                snakeCurrentPosition.y = snakeNextPosition.y;
+
+                Debug.Log("Moved on y");
+            }
+        }
     }
 }
