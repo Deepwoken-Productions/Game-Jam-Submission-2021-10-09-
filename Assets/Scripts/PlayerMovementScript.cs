@@ -18,6 +18,8 @@ public class PlayerMovementScript : MonoBehaviour
     Vector3 velocity;
     bool isGrounded;
 
+    public bool isDrunk;
+
     // Update is called once per frame
     void Update()
     {
@@ -29,9 +31,24 @@ public class PlayerMovementScript : MonoBehaviour
             //Forces player on ground
             velocity.y = -2f;
         }
+        float x;
+        float z;
 
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        if (isDrunk)
+        {
+            x = -Input.GetAxis("Horizontal");
+            z = -Input.GetAxis("Vertical");
+        }
+        else
+        {
+            x = Input.GetAxis("Horizontal");
+            z = Input.GetAxis("Vertical");
+        }
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            isDrunk = !isDrunk;
+        }
 
         //Don't define a new vector as those are global co-ordinates
         Vector3 move = transform.right * x + transform.forward * z; // Similar to Unreal
