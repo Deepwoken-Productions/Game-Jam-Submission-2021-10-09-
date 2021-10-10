@@ -15,6 +15,8 @@ public class MouseLook : MonoBehaviour
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+
+        AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Audio/Voice"), playerBody.transform.position);
     }
 
     // Update is called once per frame

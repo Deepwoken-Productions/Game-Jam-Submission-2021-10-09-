@@ -27,6 +27,7 @@ public class FadeManager: MonoBehaviour
 
     public void FadeAll()
     {
+        AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Audio/DoorOpen"), door.transform.position);
         tv.gameObject.GetComponent<MeshRenderer>().material.color = Color.black;
 
         for (int i = 0; i < tilesDirectory.childCount; i++)
