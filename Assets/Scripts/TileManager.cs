@@ -15,12 +15,12 @@ public class TileManager : MonoBehaviour
     public GameObject[,] tileArray;
     public List<GameObject> tilePrefabs;
 
-    private int upMovements;
     public int maxCoins;
     private int currentCoins = 0;
 
     private Vector2Int snakeCurrentPosition;
     private Vector2Int snakeNextPosition;
+    bool loop = true;
 
     ITile prvTile = null;
 
@@ -91,19 +91,23 @@ public class TileManager : MonoBehaviour
         }
         else
         {
-            switch (Random.Range(0, 4))
+            switch (Random.Range(0, 3))
             {
                 case 0:
+                    Debug.Log("Def Made");
                     tile = new DefaultTile(false);
                     break;
                 case 1:
+                    Debug.Log("Coin Made");
                     tile = new CoinTile(false);
                     break;
                 case 2:
-                    tile = new NullTile(false);
+                    Debug.Log("NullTile Made");
                     break;
             }
         }
+        prvTile = tile;
+        //if(!prvTile.GetType().Equals(typeof(NullTile)))
         GameObject newTile = GameObject.Instantiate(tile.GetTile());
         Debug.Log(snakeCurrentPosition);
         newTile.transform.position = origin.position + new Vector3(snakeCurrentPosition.y * 8, 0, snakeCurrentPosition.x * 8);
@@ -114,22 +118,22 @@ public class TileManager : MonoBehaviour
 
     void GenerateMap()
     {
-        upMovements = 0;
-
         snakeCurrentPosition = new Vector2Int(Random.Range(0, tileArray.GetLength(0)), 0);
         tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y] = tiles();
+        tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y].layer = 6;
         Debug.Log("Beginning Map Gen");
 
-        for (int i = 0; i < 20; i++)
+
+        do
         {
             int direction = Random.Range(0, 3);
             snakeNextPosition = Vector2Int.zero;
 
-            if(direction == 0)
+            if (direction == 0)
             {
                 snakeNextPosition = snakeCurrentPosition + new Vector2Int(1, 0);
             }
-            else if(direction == 1)
+            else if (direction == 1)
             {
                 snakeNextPosition = snakeCurrentPosition + new Vector2Int(0, 1);
             }
@@ -140,21 +144,18 @@ public class TileManager : MonoBehaviour
 
             if (MoveIfPositionValid())
             {
-                Debug.Log(i);
                 tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y] = tiles();
-                tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y].transform.name = "Tile";
+                tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y].layer = 6;
             }
 
-            else if(upMovements >= 5)
+
+            if (snakeCurrentPosition.y == tileArray.GetLength(1) -1)
             {
                 Debug.Log("Snake has reached the end");
-                break;
+                loop = false;
             }
-
-            
-
-            
         }
+        while (loop);
     }
 
     bool MoveIfPositionValid()
@@ -163,11 +164,7 @@ public class TileManager : MonoBehaviour
         {
             if (tileArray[snakeNextPosition.x, snakeCurrentPosition.y] == null)
             {
-                if (snakeNextPosition.x > snakeCurrentPosition.x)
-                {
-                    upMovements++;
-                }
-
+                
                 snakeCurrentPosition.x = snakeNextPosition.x;
 
                 Debug.Log("Moved on x");
@@ -180,7 +177,6 @@ public class TileManager : MonoBehaviour
             if (tileArray[snakeCurrentPosition.x, snakeNextPosition.y] == null)
             {
                 snakeCurrentPosition.y = snakeNextPosition.y;
-
                 Debug.Log("Moved on y");
                 return true;
             }
