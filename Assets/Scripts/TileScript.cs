@@ -5,10 +5,16 @@ using UnityEngine;
 public class TileScript : MonoBehaviour, ITile
 {
     public GameObject tile;
+    public AudioClip click;
+    public bool triggered;
 
     private void OnTriggerEnter(Collider other)
     {
-        OnStep();
+        if(triggered == false)
+        {
+            OnStep();
+            triggered = true;
+        }
     }
 
     public GameObject GetTile()
@@ -23,6 +29,6 @@ public class TileScript : MonoBehaviour, ITile
 
     public void OnStep()
     {
-        AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Audio/click"), tile.transform.position);
+        AudioSource.PlayClipAtPoint(click, tile.transform.position);
     }
 }
