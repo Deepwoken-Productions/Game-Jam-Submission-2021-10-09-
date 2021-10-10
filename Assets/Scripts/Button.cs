@@ -23,7 +23,7 @@ public class Button : MonoBehaviour
         {
             if (Physics.Raycast(ray, out hit) && hit.collider.gameObject == gameObject)
             {
-                unityEvent.Invoke(); 
+                FadeManager.instance.FadeAll();
             }
         }
     }

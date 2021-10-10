@@ -37,7 +37,6 @@ public class TileManager : MonoBehaviour
 
         PopulateMap();
 
-        StartCoroutine("GenerateMap");
         //GenerateMap();
     }
 
@@ -80,7 +79,7 @@ public class TileManager : MonoBehaviour
         }
     }
 
-    IEnumerator GenerateMap()
+    void GenerateMap()
     {
         upMovements = 0;
 
@@ -113,13 +112,10 @@ public class TileManager : MonoBehaviour
 
             if(upMovements >= 6)
             {
-                Debug.Log("Snake has reached the end");
                 break;
             }
 
-            yield return new WaitForSeconds(1);
-
-            Destroy(tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y]);
+             Destroy(tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y]);
 
             if(tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y])
             {
@@ -140,8 +136,6 @@ public class TileManager : MonoBehaviour
                 }
 
                 snakeCurrentPosition.x = snakeNextPosition.x;
-
-                Debug.Log("Moved on x");
             }
         }
 
@@ -150,8 +144,6 @@ public class TileManager : MonoBehaviour
             if (tileArray[snakeCurrentPosition.x, snakeNextPosition.y] != null && tileArray[snakeCurrentPosition.x, snakeNextPosition.y].transform.name != "NullTile")
             {
                 snakeCurrentPosition.y = snakeNextPosition.y;
-
-                Debug.Log("Moved on y");
             }
         }
     }
