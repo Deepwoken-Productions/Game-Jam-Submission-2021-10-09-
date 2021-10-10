@@ -22,6 +22,8 @@ public class TileManager : MonoBehaviour
     private Vector2Int snakeCurrentPosition;
     private Vector2Int snakeNextPosition;
 
+    ITile prvTile = null;
+
     void Awake()
     {
         if (instance == null)
@@ -30,12 +32,12 @@ public class TileManager : MonoBehaviour
         }
         else
         {
-            GameObject.Destroy(gameObject);
+            Destroy(gameObject);
         }
 
         tileArray = new GameObject[mapLength, mapWidth];
 
-        PopulateMap();
+        //PopulateMap();
 
         StartCoroutine("GenerateMap");
         //GenerateMap();
@@ -56,7 +58,7 @@ public class TileManager : MonoBehaviour
 
                 if (randomNumber == 0)
                 {
-                    if(currentCoins >= maxCoins)
+                    if (currentCoins >= maxCoins)
                     {
                         tilePrefab = defaultTile;
                     }
@@ -75,21 +77,52 @@ public class TileManager : MonoBehaviour
                 newTile.transform.position = origin.position + new Vector3(origin.position.x, 0, origin.position.z) + new Vector3(i * newTile.transform.GetChild(0).localScale.x * 2, 0, j * newTile.transform.GetChild(0).localScale.z * 2);
                 newTile.transform.parent = transform;
 
-                tileArray[i + mapLength/2, j + mapWidth/2] = newTile;
+                tileArray[i + mapLength / 2, j + mapWidth / 2] = newTile;
             }
         }
     }
 
-    IEnumerator GenerateMap()
+    GameObject tiles() 
+    {
+        ITile tile = null;
+        if (prvTile == null || !prvTile.GetType().Equals(typeof(DefaultTile)))
+        {
+            tile = new DefaultTile(false);
+        }
+        else
+        {
+            switch (Random.Range(0, 4))
+            {
+                case 0:
+                    tile = new DefaultTile(false);
+                    break;
+                case 1:
+                    tile = new CoinTile(false);
+                    break;
+                case 2:
+                    tile = new NullTile(false);
+                    break;
+            }
+        }
+        GameObject newTile = GameObject.Instantiate(tile.GetTile());
+        Debug.Log(snakeCurrentPosition);
+        newTile.transform.position = origin.position + new Vector3(snakeCurrentPosition.y * 8, 0, snakeCurrentPosition.x * 8);
+        Debug.Log(newTile.transform.position);
+        newTile.transform.parent = transform;
+        return newTile;
+    }
+
+    void GenerateMap()
     {
         upMovements = 0;
 
-        snakeCurrentPosition = new Vector2Int(0, Mathf.RoundToInt(mapLength / 2));
-        Destroy(tileArray[0, snakeCurrentPosition.y]);
+        snakeCurrentPosition = new Vector2Int(Random.Range(0, tileArray.GetLength(0)), 0);
+        tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y] = tiles();
+        Debug.Log("Beginning Map Gen");
 
-        while (true)
+        for (int i = 0; i < 20; i++)
         {
-            int direction = Random.Range(0, 4);
+            int direction = Random.Range(0, 3);
             snakeNextPosition = Vector2Int.zero;
 
             if(direction == 0)
@@ -104,35 +137,31 @@ public class TileManager : MonoBehaviour
             {
                 snakeNextPosition = snakeCurrentPosition + new Vector2Int(-1, 0);
             }
-            else if (direction == 3)
+
+            if (MoveIfPositionValid())
             {
-                snakeNextPosition = snakeCurrentPosition +  new Vector2Int(0, -1);
+                Debug.Log(i);
+                tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y] = tiles();
+                tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y].transform.name = "Tile";
             }
 
-            MoveIfPositionValid();
-
-            if(upMovements >= 6)
+            else if(upMovements >= 5)
             {
                 Debug.Log("Snake has reached the end");
                 break;
             }
 
-            yield return new WaitForSeconds(1);
+            
 
-            Destroy(tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y]);
-
-            if(tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y])
-            {
-                tileArray[snakeCurrentPosition.x, snakeCurrentPosition.y].transform.name = "NullTile";
-            }
+            
         }
     }
 
-    void MoveIfPositionValid()
+    bool MoveIfPositionValid()
     {
         if (snakeNextPosition.x <= tileArray.GetLength(0) - 1 && snakeNextPosition.x >= 0)
         {
-            if (tileArray[snakeNextPosition.x, snakeCurrentPosition.y] != null && tileArray[snakeNextPosition.x, snakeCurrentPosition.y].transform.name != "NullTile")
+            if (tileArray[snakeNextPosition.x, snakeCurrentPosition.y] == null)
             {
                 if (snakeNextPosition.x > snakeCurrentPosition.x)
                 {
@@ -142,17 +171,20 @@ public class TileManager : MonoBehaviour
                 snakeCurrentPosition.x = snakeNextPosition.x;
 
                 Debug.Log("Moved on x");
+                return true;
             }
         }
 
         if (snakeNextPosition.y <= tileArray.GetLength(1) - 1 && snakeNextPosition.y >= 0)
         {
-            if (tileArray[snakeCurrentPosition.x, snakeNextPosition.y] != null && tileArray[snakeCurrentPosition.x, snakeNextPosition.y].transform.name != "NullTile")
+            if (tileArray[snakeCurrentPosition.x, snakeNextPosition.y] == null)
             {
                 snakeCurrentPosition.y = snakeNextPosition.y;
 
                 Debug.Log("Moved on y");
+                return true;
             }
         }
+        return false;
     }
 }
