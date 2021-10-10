@@ -322,6 +322,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 127349208}
+  - component: {fileID: 127349209}
   m_Layer: 0
   m_Name: Tiles
   m_TagString: Untagged
@@ -343,6 +344,21 @@ Transform:
   m_Father: {fileID: 958510773}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &127349209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 127349207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b22452b1bb5625b4f918114296a55b55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CoinTileMat: {fileID: 2100000, guid: 535d0934d127ecb4ab3e9e42d2a6243e, type: 2}
+  DefTileMat: {fileID: 2100000, guid: ca8a131b84afee5438cbaa7772ea7029, type: 2}
+  ConveyorMat: {fileID: 2100000, guid: 317b68a9791050b46bcf6de6cc88468c, type: 2}
 --- !u!1 &464987469
 GameObject:
   m_ObjectHideFlags: 0
@@ -644,7 +660,7 @@ MonoBehaviour:
   unityEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 958510775}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: FadeManager, Assembly-CSharp
         m_MethodName: FadeAll
         m_Mode: 1
@@ -1139,7 +1155,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 958510773}
-  - component: {fileID: 958510775}
   - component: {fileID: 958510774}
   m_Layer: 6
   m_Name: FadingObjects
@@ -1177,26 +1192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec6a3e60d068a7144ad9a0ea866b69f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tv: {fileID: 565759788}
-  parentMap: {fileID: 127349208}
-  barricade: {fileID: 464987470}
   speed: 2
---- !u!114 &958510775
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 958510772}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec6a3e60d068a7144ad9a0ea866b69f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tv: {fileID: 0}
-  parentMap: {fileID: 0}
-  barricade: {fileID: 0}
-  speed: 0
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -1249,7 +1245,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 90
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1502,7 +1498,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1428269619}
   - component: {fileID: 1428269621}
-  - component: {fileID: 1428269620}
   m_Layer: 6
   m_Name: Camera
   m_TagString: Untagged
@@ -1525,14 +1520,6 @@ Transform:
   m_Father: {fileID: 1795712120}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 90}
---- !u!81 &1428269620
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1428269618}
-  m_Enabled: 1
 --- !u!20 &1428269621
 Camera:
   m_ObjectHideFlags: 0
