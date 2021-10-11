@@ -15,6 +15,8 @@ public class MouseLook : MonoBehaviour
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+
+        AudioSource.PlayClipAtPoint((AudioClip)Resources.Load("Audio/Voice"), playerBody.transform.position);
     }
 
     // Update is called once per frame
@@ -27,7 +29,7 @@ public class MouseLook : MonoBehaviour
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         //Rotates the player to face the correct direction that they are looking... not needed considering context of game
-        transform.localRotation = Quaternion.Euler(xRotation, 0 ,0);
+        transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
         playerBody.Rotate(Vector3.up * mouseX);
     }
 }
